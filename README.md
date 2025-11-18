@@ -197,14 +197,9 @@ public/               # Static assets including example images
 
 This project is licensed under the MIT License.
 
-## Support & Contact
+## Star History
 
-For support or inquiries, please open an issue on the GitHub repository or contact the maintainer at:
-
--   Email: me[at]jiang.jp
-
----
-
+[![Star History Chart](https://api.star-history.com/svg?repos=shenpeiheng/ai-smart-draw&type=date&legend=top-left)](https://www.star-history.com/#shenpeiheng/ai-smart-draw&type=date&legend=top-left)
 
 
 
