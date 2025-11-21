@@ -4,7 +4,7 @@ import {Buffer} from "node:buffer";
 import {NextRequest, NextResponse} from "next/server";
 
 // Default to kroki.io
-const DEFAULT_RENDERER = process.env.KROKI_RENDER_BASE?.replace(/\/$/, "") || "https://kroki.io";
+const DEFAULT_RENDERER = process.env.KROKI_RENDER_BASE?.replace(/\/$/, "") || "http://vg.007988.xyz:8000";
 
 // Supported diagram types and their endpoints
 // Reference: https://kroki.io/#support
