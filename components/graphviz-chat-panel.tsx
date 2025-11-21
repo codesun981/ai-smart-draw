@@ -95,7 +95,6 @@ export default function GraphvizChatPanel() {
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex gap-2 items-center">
                         <ModeSelector active="graphviz" />
-                        <ModelConfigDialog size="sm" />
                     </div>
                 </div>
             </CardHeader>

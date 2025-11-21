@@ -96,7 +96,6 @@ export default function ExcalidrawChatPanel() {
                 <div className="flex items-center justify-between gap-2">
                     <div className="flex gap-2 items-center">
                         <ModeSelector active="excalidraw" />
-                        <ModelConfigDialog size="sm" />
                     </div>
                 </div>
             </CardHeader>

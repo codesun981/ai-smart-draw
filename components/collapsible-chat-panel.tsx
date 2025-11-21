@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, X } from "lucide-react";
+import { MessageCircle, X, Github } from "lucide-react";
 import ChatPanel from "@/components/chat-panel";
 import ExcalidrawChatPanel from "@/components/excalidraw-chat-panel";
 import MermaidChatPanel from "@/components/mermaid-chat-panel";
 import PlantUMLChatPanel from "@/components/plantuml-chat-panel";
 import KrokiChatPanel from "@/components/kroki-chat-panel";
 import GraphvizChatPanel from "@/components/graphviz-chat-panel";
+import { ModelConfigDialog } from "@/components/model-config-dialog";
 import { cn } from "@/lib/utils";
 
 type PanelType = "drawio" | "excalidraw" | "mermaid" | "plantuml" | "kroki" | "graphviz";
@@ -68,13 +69,24 @@ export function CollapsibleChatPanel({
       <div className="flex-1 h-full">
         {renderChatPanel()}
       </div>
-      <div className="absolute right-2 top-4 z-50">
+      <div className="absolute right-2 top-4 z-50 flex gap-1">
+        <ModelConfigDialog size="sm" />
         <Button
-          onClick={() => setIsCollapsed(true)}
-          className="rounded-full shadow-lg h-6 w-6 bg-gray-500 hover:bg-gray-600 text-white transition-all duration-300"
-          size="icon"
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 h-8 px-2"
+          onClick={() => window.open('https://github.com/shenpeiheng/ai-smart-draw', '_blank')}
         >
-          <X className="h-3 w-3" />
+          <Github className="h-4 w-4" />
+          {/*<span className="hidden sm:inline">GitHub</span>*/}
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2 h-8 px-2"
+          onClick={() => setIsCollapsed(true)}
+        >
+          <X className="h-4 w-4" />
         </Button>
       </div>
     </div>
