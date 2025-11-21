@@ -88,6 +88,7 @@ export function ModelConfigDialog({
                 <Button
                     variant={buttonVariant}
                     size={smallButton ? "sm" : "default"}
+                    title="模型设置"
                     className={cn("flex items-center gap-2 h-8 px-2", className)}
                 >
                     <Settings className="h-4 w-4" />
