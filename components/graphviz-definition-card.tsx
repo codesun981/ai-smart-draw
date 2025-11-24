@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp } from "lucide-react";
 import { copyToClipboard } from "@/components/plantuml-definition-card";
+import { cn } from "@/lib/utils";
 
 interface GraphvizDefinitionCardProps {
     definition: string;
@@ -24,6 +25,7 @@ export function GraphvizDefinitionCard({
     onToggle,
 }: GraphvizDefinitionCardProps) {
     const [copied, setCopied] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         if (!copied) return;
@@ -38,7 +40,10 @@ export function GraphvizDefinitionCard({
     };
 
     const handleReset = () => {
+        setIsResetting(true);
         onChange(defaultDefinition);
+        // 添加一个短暂的延迟来显示重置动画效果
+        setTimeout(() => setIsResetting(false), 300);
     };
 
     return (
@@ -73,8 +78,15 @@ export function GraphvizDefinitionCard({
                         size="sm"
                         onClick={handleReset}
                         title="重置"
+                        className={cn(
+                            "transition-all duration-300",
+                            isResetting && "bg-blue-500 text-white border-blue-500"
+                        )}
                     >
-                        <RefreshCcw className="h-4 w-4" />
+                        <RefreshCcw className={cn(
+                            "h-4 w-4",
+                            isResetting && "animate-spin"
+                        )} />
                     </Button>
                     <Button
                         type="button"

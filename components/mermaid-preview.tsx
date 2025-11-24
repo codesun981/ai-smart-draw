@@ -21,6 +21,7 @@ export function MermaidPreview({
     const [zoom, setZoom] = useState(1);
     const [showGrid, setShowGrid] = useState(true);
     const [handDrawn, setHandDrawn] = useState(true);
+    const [isResetting, setIsResetting] = useState(false);
 
     const diagramId = useMemo(
         () => `mermaid-${Math.random().toString(36).slice(2, 10)}`,
@@ -101,7 +102,14 @@ export function MermaidPreview({
 
     const zoomIn = () => setZoom((z) => Math.min(z + 0.1, 3));
     const zoomOut = () => setZoom((z) => Math.max(z - 0.1, 0.3));
-    const resetZoom = () => setZoom(1);
+    
+    const resetZoom = () => {
+        setIsResetting(true);
+        setZoom(1);
+        // 添加一个短暂的延迟来显示重置动画效果
+        setTimeout(() => setIsResetting(false), 300);
+    };
+    
     const toggleGrid = () => setShowGrid(!showGrid);
     const toggleHandDrawn = () => setHandDrawn(!handDrawn);
 
@@ -150,8 +158,20 @@ export function MermaidPreview({
                     >
                         <Grid3X3 className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" title="重置" size="sm" onClick={resetZoom}>
-                        <RefreshCcw className="h-4 w-4" />
+                    <Button 
+                        variant="outline" 
+                        title="重置" 
+                        size="sm" 
+                        onClick={resetZoom}
+                        className={cn(
+                            "transition-all duration-300",
+                            isResetting && "bg-blue-500 text-white border-blue-500"
+                        )}
+                    >
+                        <RefreshCcw className={cn(
+                            "h-4 w-4",
+                            isResetting && "animate-spin"
+                        )} />
                     </Button>
                     <div className="flex rounded-md overflow-hidden border border-input shadow-sm">
                         <Button variant="outline" title="放小" size="sm" onClick={zoomOut} className="rounded-none border-0 px-3">

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp } from "lucide-react";
 import { copyToClipboard } from "@/components/plantuml-definition-card";
+import { cn } from "@/lib/utils";
 
 interface KrokiDefinitionCardProps {
     definition: string;
@@ -22,6 +23,7 @@ export function KrokiDefinitionCard({
     onToggle,
 }: KrokiDefinitionCardProps) {
     const [copied, setCopied] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         if (!copied) return;
@@ -33,6 +35,15 @@ export function KrokiDefinitionCard({
         if (!definition) return;
         await copyToClipboard(definition);
         setCopied(true);
+    };
+    
+    const handleReset = () => {
+        if (onReset) {
+            setIsResetting(true);
+            onReset();
+            // 添加一个短暂的延迟来显示重置动画效果
+            setTimeout(() => setIsResetting(false), 300);
+        }
     };
 
     return (
@@ -66,10 +77,17 @@ export function KrokiDefinitionCard({
                             type="button"
                             variant="outline"
                             size="sm"
-                            onClick={onReset}
+                            onClick={handleReset}
                             title="重置"
+                            className={cn(
+                                "transition-all duration-300",
+                                isResetting && "bg-blue-500 text-white border-blue-500"
+                            )}
                         >
-                            <RefreshCcw className="h-4 w-4" />
+                            <RefreshCcw className={cn(
+                                "h-4 w-4",
+                                isResetting && "animate-spin"
+                            )} />
                         </Button>
                     )}
                     <Button

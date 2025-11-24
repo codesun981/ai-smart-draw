@@ -27,6 +27,7 @@ export function GraphvizPreview() {
     const [retryNonce, setRetryNonce] = useState(0);
     const [debouncedDefinition, setDebouncedDefinition] = useState(definition);
     const [zoom, setZoom] = useState(1);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -138,7 +139,13 @@ export function GraphvizPreview() {
 
     const zoomIn = () => setZoom(prev => Math.min(prev * 1.2, 3));
     const zoomOut = () => setZoom(prev => Math.max(prev / 1.2, 0.75));
-    const resetZoom = () => setZoom(1);
+    
+    const resetZoom = () => {
+        setIsResetting(true);
+        setZoom(1);
+        // 添加一个短暂的延迟来显示重置动画效果
+        setTimeout(() => setIsResetting(false), 300);
+    };
 
     const previewContent = useMemo(() => {
         if (loadError) {
@@ -198,7 +205,7 @@ export function GraphvizPreview() {
                 dangerouslySetInnerHTML={{ __html: svgMarkup }}
             />
         );
-    }, [loadError, svgMarkup, isLoading, zoom]);
+    }, [loadError, svgMarkup, zoom, isLoading]);
 
     return (
         <div className="flex flex-col h-full bg-white rounded-lg border shadow-sm overflow-hidden">
@@ -210,11 +217,20 @@ export function GraphvizPreview() {
                     </p>
                 </div>
                 <div className="flex gap-2 flex-wrap justify-end items-center">
-                    <Button variant="outline" title="复制" size="sm" onClick={handleCopy}>
-                        {copied ? <CheckIcon className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    </Button>
-                    <Button variant="outline" title="重置" size="sm" onClick={resetZoom}>
-                        <RefreshCcw className="h-4 w-4" />
+                    <Button 
+                        variant="outline" 
+                        title="重置" 
+                        size="sm" 
+                        onClick={resetZoom}
+                        className={cn(
+                            "transition-all duration-300",
+                            isResetting && "bg-blue-500 text-white border-blue-500"
+                        )}
+                    >
+                        <RefreshCcw className={cn(
+                            "h-4 w-4",
+                            isResetting && "animate-spin"
+                        )} />
                     </Button>
                     <div className="flex rounded-md overflow-hidden border border-input shadow-sm">
                         <Button variant="outline" title="放小" size="sm" onClick={zoomOut} className="rounded-none border-0 px-3">

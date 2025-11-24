@@ -69,6 +69,7 @@ export function KrokiPreview({
     const [retryNonce, setRetryNonce] = useState(0);
     const [debouncedDefinition, setDebouncedDefinition] = useState(definition);
     const [zoom, setZoom] = useState(1);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -152,7 +153,13 @@ export function KrokiPreview({
 
     const zoomIn = () => setZoom((z) => Math.min(z + 0.1, 3));
     const zoomOut = () => setZoom((z) => Math.max(z - 0.1, 0.3));
-    const resetZoom = () => setZoom(1);
+    
+    const resetZoom = () => {
+        setIsResetting(true);
+        setZoom(1);
+        // 添加一个短暂的延迟来显示重置动画效果
+        setTimeout(() => setIsResetting(false), 300);
+    };
 
     const handleDownload = () => {
         if (!svgMarkup) return;
@@ -200,19 +207,10 @@ export function KrokiPreview({
             );
         }
 
-        if (isLoading) {
-            return (
-                <div className="flex flex-col items-center justify-center text-center text-sm text-muted-foreground gap-3 p-4">
-                    <LoaderCircle className="h-5 w-5 animate-spin" />
-                    <p>Rendering diagram...</p>
-                </div>
-            );
-        }
-
         if (!svgMarkup) {
             return (
-                <div className="flex items-center justify-center text-sm text-muted-foreground p-4">
-                    Enter a diagram definition to render
+                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                    Provide diagram definition to render a preview.
                 </div>
             );
         }
@@ -241,7 +239,7 @@ export function KrokiPreview({
                 dangerouslySetInnerHTML={{ __html: svgMarkup }}
             />
         );
-    }, [loadError, svgMarkup, isLoading, zoom]);
+    }, [loadError, svgMarkup, zoom]);
 
     return (
         <div className={cn("flex flex-col h-full bg-white rounded-lg border shadow-sm overflow-hidden", className)}>
@@ -264,8 +262,20 @@ export function KrokiPreview({
                             </option>
                         ))}
                     </select>
-                    <Button variant="outline" title="重置" size="sm" onClick={resetZoom}>
-                        <RefreshCcw className="h-4 w-4" />
+                    <Button 
+                        variant="outline" 
+                        title="重置" 
+                        size="sm" 
+                        onClick={resetZoom}
+                        className={cn(
+                            "transition-all duration-300",
+                            isResetting && "bg-blue-500 text-white border-blue-500"
+                        )}
+                    >
+                        <RefreshCcw className={cn(
+                            "h-4 w-4",
+                            isResetting && "animate-spin"
+                        )} />
                     </Button>
                     <div className="flex rounded-md overflow-hidden border border-input shadow-sm">
                         <Button variant="outline" title="放小" size="sm" onClick={zoomOut} className="rounded-none border-0 px-3">
@@ -274,7 +284,7 @@ export function KrokiPreview({
                         <span className="flex items-center justify-center text-xs w-16 bg-background">
                             {Math.round(zoom * 100)}%
                         </span>
-                        <Button variant="outline"title="放大" size="sm" onClick={zoomIn} className="rounded-none border-0 px-3">
+                        <Button variant="outline" title="放大" size="sm" onClick={zoomIn} className="rounded-none border-0 px-3">
                             <ZoomIn className="h-4 w-4" />
                         </Button>
                     </div>
@@ -283,9 +293,19 @@ export function KrokiPreview({
                     </Button>
                 </div>
             </div>
-            
-            <div className="flex-1 overflow-auto bg-white relative">
-                {previewContent}
+            <div className="flex-1 p-4 bg-white overflow-auto relative">
+                <div
+                    className={cn(
+                        "absolute inset-x-4 top-4 flex items-center gap-2 text-xs text-muted-foreground transition-opacity pointer-events-none",
+                        isLoading ? "opacity-100" : "opacity-0"
+                    )}
+                >
+                    <LoaderCircle className="h-4 w-4 animate-spin" />
+                    <span>Rendering diagram...</span>
+                </div>
+                <div className={cn(isLoading && "opacity-50 pointer-events-none")}>
+                    {previewContent}
+                </div>
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface PlantUMLDefinitionCardProps {
     definition: string;
@@ -21,6 +22,7 @@ export function PlantUMLDefinitionCard({
     onToggle,
 }: PlantUMLDefinitionCardProps) {
     const [copied, setCopied] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         if (!copied) return;
@@ -32,6 +34,15 @@ export function PlantUMLDefinitionCard({
         if (!definition) return;
         await copyToClipboard(definition);
         setCopied(true);
+    };
+    
+    const handleReset = () => {
+        if (onReset) {
+            setIsResetting(true);
+            onReset();
+            // 添加一个短暂的延迟来显示重置动画效果
+            setTimeout(() => setIsResetting(false), 300);
+        }
     };
 
     return (
@@ -65,11 +76,18 @@ export function PlantUMLDefinitionCard({
                             type="button"
                             size="sm"
                             variant="outline"
-                            onClick={onReset}
+                            onClick={handleReset}
                             title="重置"
                             disabled={!definition}
+                            className={cn(
+                                "transition-all duration-300",
+                                isResetting && "bg-blue-500 text-white border-blue-500"
+                            )}
                         >
-                            <RefreshCcw className="h-4 w-4" />
+                            <RefreshCcw className={cn(
+                                "h-4 w-4",
+                                isResetting && "animate-spin"
+                            )} />
                         </Button>
                     )}
                     <Button

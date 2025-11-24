@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp} from "lucide-react";
 import { useExcalidraw } from "@/contexts/excalidraw-context";
 import {copyToClipboard} from "@/components/plantuml-definition-card";
+import { cn } from "@/lib/utils";
 
 interface Props {
     onClear: () => void;
@@ -20,6 +21,7 @@ export function ExcalidrawSceneCard({ onClear, onHistory, historyDisabled, isCol
     const [draft, setDraft] = useState(sceneDraft ?? sceneData);
     const [error, setError] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
 
     useEffect(() => {
         setDraft(sceneDraft ?? sceneData);
@@ -62,6 +64,13 @@ export function ExcalidrawSceneCard({ onClear, onHistory, historyDisabled, isCol
             console.warn("Copy failed", e);
         }
     };
+    
+    const handleReset = () => {
+        setIsResetting(true);
+        onClear();
+        // 添加一个短暂的延迟来显示重置动画效果
+        setTimeout(() => setIsResetting(false), 300);
+    };
 
     return (
         <div className="bg-white rounded-lg border shadow-sm flex flex-col h-full">
@@ -89,8 +98,21 @@ export function ExcalidrawSceneCard({ onClear, onHistory, historyDisabled, isCol
                             )}
                         </Button>
                     )}
-                    <Button type="button" size="sm" title="重置" variant="outline" onClick={onClear}>
-                        <RefreshCcw className="h-4 w-4" />
+                    <Button 
+                        type="button" 
+                        size="sm" 
+                        title="重置" 
+                        variant="outline" 
+                        onClick={handleReset}
+                        className={cn(
+                            "transition-all duration-300",
+                            isResetting && "bg-blue-500 text-white border-blue-500"
+                        )}
+                    >
+                        <RefreshCcw className={cn(
+                            "h-4 w-4",
+                            isResetting && "animate-spin"
+                        )} />
                     </Button>
                     <Button
                         type="button"
