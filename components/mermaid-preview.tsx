@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ZoomIn, ZoomOut, RefreshCcw, Download } from "lucide-react";
+import { ZoomIn, ZoomOut, RefreshCcw, Download, Grid3X3, PenTool } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface MermaidPreviewProps {
@@ -19,6 +19,8 @@ export function MermaidPreview({
     const [renderError, setRenderError] = useState<string | null>(null);
 
     const [zoom, setZoom] = useState(1);
+    const [showGrid, setShowGrid] = useState(true);
+    const [handDrawn, setHandDrawn] = useState(true);
 
     const diagramId = useMemo(
         () => `mermaid-${Math.random().toString(36).slice(2, 10)}`,
@@ -35,6 +37,7 @@ export function MermaidPreview({
                     startOnLoad: false,
                     securityLevel: "loose",
                     theme: "neutral",
+                    look: handDrawn ? "handDrawn" : "classic",
                 });
                 setMermaidAPI(instance);
             })
@@ -48,7 +51,7 @@ export function MermaidPreview({
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [handDrawn]);
 
     useEffect(() => {
         if (!mermaidAPI) return;
@@ -62,6 +65,14 @@ export function MermaidPreview({
 
         // 使用 setTimeout 确保定义完全加载后再渲染
         const timer = setTimeout(() => {
+            // 重新初始化以应用配置更改
+            mermaidAPI.initialize({
+                startOnLoad: false,
+                securityLevel: "loose",
+                theme: "neutral",
+                look: handDrawn ? "handDrawn" : "classic",
+            });
+            
             mermaidAPI
                 .render(diagramId, definition)
                 .then(({ svg }: { svg: string }) => {
@@ -86,11 +97,13 @@ export function MermaidPreview({
             cancelled = true;
             clearTimeout(timer);
         };
-    }, [definition, mermaidAPI, diagramId]);
+    }, [definition, mermaidAPI, diagramId, handDrawn]);
 
     const zoomIn = () => setZoom((z) => Math.min(z + 0.1, 3));
     const zoomOut = () => setZoom((z) => Math.max(z - 0.1, 0.3));
     const resetZoom = () => setZoom(1);
+    const toggleGrid = () => setShowGrid(!showGrid);
+    const toggleHandDrawn = () => setHandDrawn(!handDrawn);
 
     const handleDownload = () => {
         if (!svg) return;
@@ -121,6 +134,22 @@ export function MermaidPreview({
                     </p>
                 </div>
                 <div className="flex gap-2 flex-wrap justify-end items-center">
+                    <Button 
+                        variant={handDrawn ? "default" : "outline"} 
+                        title="手绘风格" 
+                        size="sm" 
+                        onClick={toggleHandDrawn}
+                    >
+                        <PenTool className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                        variant={showGrid ? "default" : "outline"} 
+                        title="网格点" 
+                        size="sm" 
+                        onClick={toggleGrid}
+                    >
+                        <Grid3X3 className="h-4 w-4" />
+                    </Button>
                     <Button variant="outline" title="重置" size="sm" onClick={resetZoom}>
                         <RefreshCcw className="h-4 w-4" />
                     </Button>
@@ -142,7 +171,13 @@ export function MermaidPreview({
 
             </div>
 
-            <div className="flex-1 overflow-auto p-4 bg-white">
+            <div 
+                className="flex-1 overflow-auto p-4 bg-white relative"
+                style={showGrid ? {
+                    backgroundImage: "radial-gradient(circle, #ccc 1px, transparent 1px)",
+                    backgroundSize: "20px 20px",
+                } : {}}
+            >
                 {renderError ? (
                     <div className="h-full flex items-center justify-center text-red-500 text-sm text-center px-4">
                         {renderError}
