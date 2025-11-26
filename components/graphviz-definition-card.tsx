@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp } from "lucide-react";
+import {ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp, Copy} from "lucide-react";
 import { copyToClipboard } from "@/components/plantuml-definition-card";
 import { cn } from "@/lib/utils";
 
@@ -97,9 +97,9 @@ export function GraphvizDefinitionCard({
                         disabled={!definition}
                     >
                         {copied ? (
-                            <ClipboardCheck className="h-4 w-4" />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                         ) : (
-                            <ClipboardCopy className="h-4 w-4" />
+                            <Copy className="h-4 w-4" />
                         )}
                     </Button>
                 </div>

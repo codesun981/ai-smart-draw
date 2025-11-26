@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp} from "lucide-react";
+import {ClipboardCopy, ClipboardCheck, RefreshCcw, ChevronsDown, ChevronsUp, Copy} from "lucide-react";
 import { useExcalidraw } from "@/contexts/excalidraw-context";
 import {copyToClipboard} from "@/components/plantuml-definition-card";
 import { cn } from "@/lib/utils";
@@ -118,6 +118,20 @@ export function ExcalidrawSceneCard({ onClear, onHistory, historyDisabled, isCol
                         type="button"
                         size="sm"
                         variant="outline"
+                        onClick={handleCopy}
+                        title="复制"
+                        disabled={!draft}
+                    >
+                        {copied ? (
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        ) : (
+                            <Copy className="h-4 w-4" />
+                        )}
+                    </Button>
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
                         onClick={onHistory}
                         title="历史记录"
                         disabled={historyDisabled}
@@ -128,20 +142,6 @@ export function ExcalidrawSceneCard({ onClear, onHistory, historyDisabled, isCol
                             <path d="M12 7v5l4 2"/>
                             <path d="M16 21a9 9 0 1 0-9-9"/>
                         </svg>
-                    </Button>
-                    <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={handleCopy}
-                        title="复制"
-                        disabled={!draft}
-                    >
-                        {copied ? (
-                            <ClipboardCheck className="h-4 w-4" />
-                        ) : (
-                            <ClipboardCopy className="h-4 w-4" />
-                        )}
                     </Button>
                     <Button
                         type="button"
